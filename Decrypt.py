@@ -2,6 +2,7 @@ from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP, AES
 import base64
 import json
+import requests
 
 # Load private key from file
 def load_private_key(filepath):
@@ -23,8 +24,17 @@ def decrypt_data(encrypted_data, private_key):
     return data.decode()
 
 # Load the encrypted data from file
-with open("encrypted_data.txt", "r") as file:
-    encrypted_data = json.load(file)
+url = 'http://localhost:3000/data'
+
+# Send a GET request to fetch the data
+response = requests.get(url)
+
+# Assuming the server responds with JSON data
+if response.status_code == 200:
+    encrypted_data = response.json()
+    print('Received encrypted data:', encrypted_data)
+else:
+    print('Failed to fetch data, status code:', response.status_code)
 
 # Load private key
 private_key = load_private_key("keys/private.pem")

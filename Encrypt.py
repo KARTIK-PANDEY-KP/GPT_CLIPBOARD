@@ -5,6 +5,8 @@ from Crypto.Cipher import PKCS1_OAEP, AES
 from Crypto.Random import get_random_bytes
 import base64
 import json
+import requests
+import json
 
 # Load public key from file
 def load_public_key(filepath):
@@ -33,8 +35,10 @@ def capture_keyboard(public_key):
             keyboard.wait('ctrl+shift+space')
             clipboard_content = pc.paste()
             encrypted_content = encrypt_data(clipboard_content, public_key)
-            with open("encrypted_data.txt", "w") as file:
-                json.dump(encrypted_content, file)
+            url = 'http://localhost:3000/store'
+            # Send a POST request with JSON data
+            response = requests.post(url, json=encrypted_content)
+
             print("Encrypted data saved to file.")
         except KeyboardInterrupt:
             print("Ctrl+C pressed. Exiting...")
